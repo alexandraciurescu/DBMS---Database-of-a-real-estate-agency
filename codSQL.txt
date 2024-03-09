@@ -1,0 +1,1168 @@
+CREATE TABLE JUDET
+(ID_JUDET VARCHAR2(2) PRIMARY KEY,
+ DENUMIRE VARCHAR2(20) NOT NULL
+ );
+
+CREATE TABLE LOCALITATE
+(ID_LOCALITATE NUMBER(10) PRIMARY KEY,
+ ID_JUDET VARCHAR2(2),
+ DENUMIRE VARCHAR2(20) NOT NULL
+ );
+
+ALTER TABLE LOCALITATE
+ADD CONSTRAINT FKJUDET FOREIGN KEY
+(
+  ID_JUDET 
+)
+REFERENCES JUDET
+(
+  ID_JUDET 
+);
+
+CREATE TABLE STUDII
+(ID_STUDII VARCHAR2(1) PRIMARY KEY,
+ DENUMIRE VARCHAR2(20) NOT NULL
+ );
+
+
+CREATE TABLE FUNCTIE
+(ID_FUNCTIE NUMBER(2) PRIMARY KEY,
+ DENUMIRE VARCHAR2(20) NOT NULL
+ );
+
+CREATE TABLE OPERATIE
+(ID_OPERATIE VARCHAR2(1) PRIMARY KEY,
+ DENUMIRE VARCHAR2(20) NOT NULL
+ );
+
+CREATE TABLE PROPRIETATE
+(ID_PROPRIETATE VARCHAR2(1) PRIMARY KEY,
+ DENUMIRE VARCHAR2(20) NOT NULL
+ );
+
+CREATE TABLE ANGAJAT
+(Id_angajat  Number(3) PRIMARY KEY,
+Id_functie  Number(2) Not null,
+Nume Varchar2(20) Not null,
+Prenume Varchar2(20) Not null,
+Cnp Varchar2(13) Not null,
+Adresa Varchar2(30) Not null,
+Telefon Varchar2(10) Not null,
+email Varchar2(20) Not null,
+Cont Varchar2(20) Not null,
+parola Varchar2(20) Not null
+);
+
+ALTER TABLE ANGAJAT
+ADD CONSTRAINT FKFUNCTIE FOREIGN KEY
+(
+  ID_FUNCTIE
+)
+REFERENCES FUNCTIE
+(
+  ID_FUNCTIE
+);
+
+CREATE TABLE ANG_STUDII
+(Id_angajat  Number(3) Not null,
+Id_studii  Varchar2(1) Not null
+);
+
+--ADAUGARE CHEIE PRIMARA LA ANG_STUDII
+--ADAUGARE KEY EXTERNE LA ANG_STUDII
+ALTER TABLE ANG_STUDII ADD ( 
+      CONSTRAINT ANG_STUD_PK PRIMARY KEY (ID_ANGAJAT,ID_STUDII),
+      CONSTRAINT AS_ID_ANGAJAT_FK FOREIGN KEY (ID_ANGAJAT) REFERENCES ANGAJAT(ID_ANGAJAT),
+      CONSTRAINT AS_ID_SUDII_FK FOREIGN KEY (ID_STUDII) REFERENCES STUDII(ID_STUDII)
+);
+
+CREATE TABLE MASINA
+(Id_masina  Number(3)  primary key,
+Numar Varchar2(10) Not null,
+Marca Varchar2(20) Not null
+);
+
+CREATE TABLE ANG_MAS
+(Id_masina  Number(3) Not null,
+Id_angajat  Number(3) Not null
+);
+
+--ADAUGARE CHEIE PRIMARA LA ANG_MAS
+--ADAUGARE KEY EXTERNE LA ANG_MAS
+ALTER TABLE ANG_MAS ADD ( 
+      CONSTRAINT ANG_MAS_PK PRIMARY KEY (ID_MASINA,ID_ANGAJAT),
+      CONSTRAINT AS_ID_ANGMA_FK FOREIGN KEY (ID_ANGAJAT) REFERENCES ANGAJAT(ID_ANGAJAT),
+      CONSTRAINT AS_ID_MASAN_FK FOREIGN KEY (ID_MASINA) REFERENCES MASINA(ID_MASINA)
+);
+
+CREATE TABLE CLIENT 
+(Id_client  Number(5)  primary key,
+Nume Varchar2(20) Not null,
+Prenume Varchar2(20) Not null,
+Cnp Varchar2(13) Not null,
+Adresa Varchar2(30) Not null,
+Telefon Varchar2(10) Not null,
+email Varchar2(20) 
+);
+
+CREATE TABLE OFERTA
+(Id_oferta Number(5) PRIMARY KEY,
+Id_client Number(5) Not null,
+Id_operatie  Varchar2(1) Not null,
+Id_proprietate Varchar2(1) Not null,
+Id_localitate  Number(10) Not null,
+Strada Varchar2(20) Not null,
+Suprafata Number(10,2) CHECK (SUPRAFATA >0),
+An_constructie Number(4) CHECK (An_constructie >0),
+Pret Number(10) CHECK (Pret >0),
+Descriere Varchar2(100),
+Numar Varchar2(5) 
+);
+
+ALTER TABLE oferta
+ADD CONSTRAINT FKCLIENT FOREIGN KEY
+(
+  ID_CLIENT
+)
+REFERENCES CLIENT
+(
+  ID_CLIENT
+);
+
+
+ALTER TABLE oferta
+ADD CONSTRAINT FKOPERATIE FOREIGN KEY
+(
+  ID_OPERATIE
+)
+REFERENCES OPERATIE
+(
+  ID_OPERATIE
+);
+
+
+ALTER TABLE oferta
+ADD CONSTRAINT FKPROPRIETATE FOREIGN KEY
+(
+  ID_PROPRIETATE
+)
+REFERENCES PROPRIETATE
+(
+  ID_PROPRIETATE
+);
+
+ALTER TABLE oferta
+ADD CONSTRAINT FKLOCALITATE FOREIGN KEY
+(
+  ID_LOCALITATE
+)
+REFERENCES LOCALITATE
+(
+  ID_LOCALITATE
+);
+
+CREATE TABLE CERERE
+( Id_cerere Number(5) PRIMARY KEY,
+Id_client  Number(5) Not null,
+Id_operatie  Varchar2(1) Not null,
+Id_proprietate Varchar2(1) Not null,
+Id_localitate Number(10) Not null,
+Buget Number(10) check( buget>0),
+Suprafata_minima Number(10,2) CHECK(SUPRAFATA_MINIMA>0),
+An_construcTie Number(4) CHECK(AN_CONSTRUCTIE>0)
+);
+
+ALTER TABLE CERERE
+ADD CONSTRAINT FKCLIENT2 FOREIGN KEY
+(
+  ID_CLIENT
+)
+REFERENCES CLIENT
+(
+  ID_CLIENT
+);
+
+
+ALTER TABLE CERERE
+ADD CONSTRAINT FKOPERATIE2 FOREIGN KEY
+(
+  ID_OPERATIE
+)
+REFERENCES OPERATIE
+(
+  ID_OPERATIE
+);
+
+
+ALTER TABLE CERERE
+ADD CONSTRAINT FKPROPRIETATE2 FOREIGN KEY
+(
+  ID_PROPRIETATE
+)
+REFERENCES PROPRIETATE
+(
+  ID_PROPRIETATE
+);
+ALTER TABLE CERERE
+ADD CONSTRAINT FKLOCALITATE2 FOREIGN KEY
+(
+  ID_LOCALITATE
+)
+REFERENCES LOCALITATE
+(
+  ID_LOCALITATE
+);
+
+CREATE TABLE CONTRACT
+(Id_contract  Number(5) PRIMARY KEY,
+Id_angajat Number(3) Not null,
+Id_client Number(5) Not null,
+Data Date  DEFAULT (SYSDATE),
+Comision Number(2) CHECK(COMISION>0)
+);
+
+ALTER TABLE CONTRACT
+ADD CONSTRAINT FKANGAJAT3 FOREIGN KEY
+(
+  ID_ANGAJAT
+)
+REFERENCES ANGAJAT
+(
+  ID_ANGAJAT
+);
+
+ALTER TABLE CONTRACT
+ADD CONSTRAINT FKCLIENT3 FOREIGN KEY
+(
+  ID_CLIENT
+)
+REFERENCES CLIENT
+(
+  ID_CLIENT
+);
+
+CREATE TABLE TRANZACTIE
+(Id_tranzactie Number(5) PRIMARY KEY,
+Id_angajat Number(3) Not null,
+Id_cerere Number(5) Not null,
+Id_oferta  Number(5) Not null,
+Data Date DEFAULT SYSDATE,
+Suma Number(10) CHECK(SUMA>0)
+);
+
+ALTER TABLE TRANZACTIE
+ADD CONSTRAINT FKANGAJAT4 FOREIGN KEY
+(
+  ID_ANGAJAT
+)
+REFERENCES ANGAJAT
+(
+  ID_ANGAJAT
+);
+
+
+ALTER TABLE TRANZACTIE
+ADD CONSTRAINT FKCERERE4 FOREIGN KEY
+(
+  ID_CERERE
+)
+REFERENCES CERERE
+(
+  ID_CERERE
+);
+
+ALTER TABLE TRANZACTIE
+ADD CONSTRAINT FKOFERTA4 FOREIGN KEY
+(
+  ID_OFERTA
+)
+REFERENCES OFERTA
+(
+  ID_OFERTA
+);
+COMMIT;
+
+INSERT INTO JUDET VALUES ('AB', 'Alba');
+INSERT INTO JUDET VALUES ('AR', 'Arad');
+INSERT INTO JUDET VALUES ('AG', 'Argeş');
+INSERT INTO JUDET VALUES ('BC', 'Bacău');
+INSERT INTO JUDET VALUES ('BH', 'Bihor');
+INSERT INTO JUDET VALUES ('BN', 'Bistriţa-Năsăud');
+INSERT INTO JUDET VALUES ('BT', 'Botoşani');
+INSERT INTO JUDET VALUES ('BR', 'Brăila');
+INSERT INTO JUDET VALUES ('BV', 'Braşov');
+INSERT INTO JUDET VALUES ('BZ', 'Buzău');
+INSERT INTO JUDET VALUES ('CL', 'Călăraşi');
+INSERT INTO JUDET VALUES ('CS', 'Caraş-Severin');
+INSERT INTO JUDET VALUES ('CJ', 'Cluj');
+INSERT INTO JUDET VALUES ('CT', 'Constanţa');
+INSERT INTO JUDET VALUES ('CV', 'Covasna');
+INSERT INTO JUDET VALUES ('DB', 'Dâmboviţa');
+INSERT INTO JUDET VALUES ('DJ', 'Dolj');
+INSERT INTO JUDET VALUES ('GL', 'Galaţi');
+INSERT INTO JUDET VALUES ('GR', 'Giurgiu');
+INSERT INTO JUDET VALUES ('GJ', 'Gorj');
+INSERT INTO JUDET VALUES ('HR', 'Harghita');
+INSERT INTO JUDET VALUES ('HD', 'Hunedoara');
+INSERT INTO JUDET VALUES ('IL', 'Ialomiţa');
+INSERT INTO JUDET VALUES ('IS', 'Iaşi');
+INSERT INTO JUDET VALUES ('IF', 'Ilfov');
+INSERT INTO JUDET VALUES ('MM', 'Maramureş');
+INSERT INTO JUDET VALUES ('MH', 'Mehedinţi');
+INSERT INTO JUDET VALUES ('MS', 'Mureş');
+INSERT INTO JUDET VALUES ('NT', 'Neamţ');
+INSERT INTO JUDET VALUES ('OT', 'Olt');
+INSERT INTO JUDET VALUES ('PH', 'Prahova');
+INSERT INTO JUDET VALUES ('SJ', 'Sălaj');
+INSERT INTO JUDET VALUES ('SM', 'Satu Mare');
+INSERT INTO JUDET VALUES ('SB', 'Sibiu');
+INSERT INTO JUDET VALUES ('SV', 'Suceava');
+INSERT INTO JUDET VALUES ('TR', 'Teleorman');
+INSERT INTO JUDET VALUES ('TM', 'Timiş');
+INSERT INTO JUDET VALUES ('TL', 'Tulcea');
+INSERT INTO JUDET VALUES ('VL', 'Vâlcea');
+INSERT INTO JUDET VALUES ('VS', 'Vaslui');
+INSERT INTO JUDET VALUES ('VN', 'Vrancea');
+INSERT INTO JUDET VALUES ('B', 'Bucureşti');
+
+INSERT INTO LOCALITATE VALUES (1, 'IS', 'Iasi');
+INSERT INTO LOCALITATE VALUES (2, 'B', 'Bucuresti');
+INSERT INTO LOCALITATE VALUES (3, 'CT', 'Constanta');
+INSERT INTO LOCALITATE VALUES (4, 'CT', 'Mangalia');
+INSERT INTO LOCALITATE VALUES (5, 'GL', 'Galati');
+INSERT INTO LOCALITATE VALUES (6, 'GL', 'Tecuci');
+INSERT INTO LOCALITATE VALUES (7, 'VS', 'Vaslui');
+INSERT INTO LOCALITATE VALUES (8, 'VS', 'Barlad');
+INSERT INTO LOCALITATE VALUES (9, 'BV', 'Brasov');
+INSERT INTO LOCALITATE VALUES (10, 'BV', 'Sinaia');
+INSERT INTO LOCALITATE VALUES (11, 'CJ', 'Cluj Napoca');
+
+INSERT INTO STUDII VALUES ('S','Superioare');
+INSERT INTO STUDII VALUES ('L','Liceale');
+INSERT INTO STUDII VALUES ('G','Gimnaziale');
+INSERT INTO FUNCTIE VALUES (1,'Agent');
+INSERT INTO FUNCTIE VALUES (2,'Contabil');
+INSERT INTO FUNCTIE VALUES (3,'Director');
+INSERT INTO FUNCTIE VALUES (4,'Sofer');
+INSERT INTO FUNCTIE VALUES (5,'Secretara');
+
+
+INSERT INTO FUNCTIE VALUES (6,'Ingrijitor');
+INSERT INTO FUNCTIE VALUES (7,'Administrator');
+INSERT INTO FUNCTIE VALUES (8,'Director adjunct');
+INSERT INTO FUNCTIE VALUES (9,'Casier');
+INSERT INTO FUNCTIE VALUES (10,'Informatician');
+
+
+INSERT INTO OPERATIE VALUES ('V','Vanzare');
+INSERT INTO OPERATIE VALUES ('C','Cumparare');
+INSERT INTO OPERATIE VALUES ('I','Inchiriere');
+
+
+INSERT INTO PROPRIETATE VALUES ('C','Casa');
+INSERT INTO PROPRIETATE VALUES ('A','Apartament');
+INSERT INTO PROPRIETATE VALUES ('T','Teren');
+
+
+INSERT INTO ANGAJAT VALUES(1,1,'Ionescu','Vasile','1710612370028','Str. Fagului Nr. 2', '075142561','ionescuv@fx.ro','vionescu','sdkcn');
+INSERT INTO ANGAJAT VALUES(2,1,'Popescu','Ionut','1710612370828','Str. Carpenului Nr. 3', '0751427140','popescui@fx.ro','ipopescu','sdkln');
+INSERT INTO ANGAJAT VALUES(3,1,'Chirita','Maria','2710912370028','Str. Marului Nr. 12', '075199561','chiritam@fx.ro','mchirita','sdkcnio');
+INSERT INTO ANGAJAT VALUES(4,1,'Mincu','Ion','1710612373028','Str. Stejarului Nr. 2', '072142561','mincui@fx.ro','imincu','sdttttkcn');
+INSERT INTO ANGAJAT VALUES(5,2,'Cornea','Doina','2710618870028','Str. Macinului Nr. 28', '071192561','cornead@fx.ro','dcornea','aaadkcn');
+INSERT INTO ANGAJAT VALUES(6,3,'Ciubotaru','Cornel','1710616660028','Str. Pacii Nr. 101', '075142001','ciubotaruc@fx.ro','cciubotaru','siiidkcn');
+INSERT INTO ANGAJAT VALUES(7,5,'Vieru','Ana','2710612370118','Str. Muncii Nr. 2', '074442561','vierua@fx.ro','avieru','sdddfffkcn');
+INSERT INTO ANGAJAT VALUES(8,8,'Carare','Raluca','2710612399928','Str. Donici Nr. 12', '075142092','cararer@fx.ro','rcarare','uulodkn');
+INSERT INTO ANGAJAT VALUES(9,10,'Taciune','Mihai','1710123470028','Str. Salcamului Nr. 203', '079023561','taciunem@fx.ro','mtaciune','wwqdkcn');
+INSERT INTO ANGAJAT VALUES(10,9,'Scanteie','Raluca','2723412370028','Str. Ciresului Nr. 62', '0759042361','scanteier@fx.ro','rscanteie','oosdkcn');
+
+
+INSERT INTO ANG_STUDII VALUES(1,'S');
+INSERT INTO ANG_STUDII VALUES(2,'S');
+INSERT INTO ANG_STUDII VALUES(3,'S');
+INSERT INTO ANG_STUDII VALUES(4,'S');
+INSERT INTO ANG_STUDII VALUES(5,'S');
+INSERT INTO ANG_STUDII VALUES(6,'S');
+INSERT INTO ANG_STUDII VALUES(7,'S');
+INSERT INTO ANG_STUDII VALUES(8,'S');
+INSERT INTO ANG_STUDII VALUES(9,'S');
+INSERT INTO ANG_STUDII VALUES(10,'L');
+
+
+
+INSERT INTO MASINA VALUES(1,'VS-25-YCA','Renault Megane');
+INSERT INTO MASINA VALUES(2,'B-15-FCA','Dacia Duster');
+INSERT INTO MASINA VALUES(3,'B-05-RNA','BMW X5');
+INSERT INTO MASINA VALUES(4,'B-12-CMA','Volkswagen Golf');
+INSERT INTO MASINA VALUES(5,'B-15-FCA','Dacia Logan');
+
+
+INSERT INTO ANG_MAS VALUES(1,2);
+INSERT INTO ANG_MAS VALUES(1,4);
+INSERT INTO ANG_MAS VALUES(1,10);
+INSERT INTO ANG_MAS VALUES(2,2);
+INSERT INTO ANG_MAS VALUES(2,6);
+INSERT INTO ANG_MAS VALUES(3,2);
+INSERT INTO ANG_MAS VALUES(3,3);
+INSERT INTO ANG_MAS VALUES(4,5);
+INSERT INTO ANG_MAS VALUES(4,7);
+INSERT INTO ANG_MAS VALUES(5,8);
+INSERT INTO ANG_MAS VALUES(5,9);
+
+
+INSERT  into client VALUES (1,'Cimpoesu','Adrian','1720318174050','Str. Ion Creanga Nr. 4', '0741234518','acimpoesu@gmail.com');
+INSERT  into client VALUES (2,'Margineanu','Cosmin','1540318374050','Str. Pacii Nr. 4', '0741277518','margcos@gmail.com');
+INSERT  into client VALUES (3,'Purice','Adrian','1720318374234','Str. Muntelui Nr. 89', '0741890518','apurice@gmail.com');
+INSERT  into client VALUES (4,'Tarnoveanu','Costel','1720319174050','Str. Soarelui Nr. 5', '0788734518','costelt@gmail.com');
+INSERT  into client VALUES (5,'Maciuca','Tina','2720316234050','Str. Calugareni Nr. 74', '0741234255','tinamac@gmail.com');
+INSERT  into client VALUES (6,'Caragea','Adina','2730318274050','Str. Bratianu Nr. 101', '0741231234','adinuta@gmail.com');
+INSERT  into client VALUES (7,'Frunza','George','1751018874050','Str. Tezaurului Nr. 18', '0741480518','gfrunza@gmail.com');
+INSERT  into client VALUES (8,'Bulbuc','Elena','2720118366450','Str. Liliacului Nr. 90', '0791560518','bulbuce@gmail.com');
+INSERT  into client VALUES (9,'Pricope','Diana','2721495374050','Str. Bucuresti Nr. 49', '0712384518','pricopedia@gmail.com');
+INSERT  into client VALUES (10,'Stoica','Beatrice','2725141774050','Str. Traian Nr. 10', '0761291508','beastoi@gmail.com');
+INSERT  into client VALUES ('11','Modoranu','Florin','1700318374050','Str. Crizantemelor 3', '0746123451','fmodo@gmail.com');
+INSERT  into client VALUES ('12','Arhire','Cornel','7510308374050','Str. Maicii Nr. 34', '0742127751','carhire@gmail.com');
+INSERT  into client VALUES ('13','Condurache','Adriana','3271203837423','Str. Muntelui Nr. 89', '0765189051','acondur@gmail.com');
+INSERT  into client VALUES ('14','Pirnoveanu','Ioana','2720312174050','Str. Crangului Nr. 5', '0738873451','ipirno@gmail.com');
+INSERT  into client VALUES ('15','Viorescu','Titina','2720511234050','Str. Calugareni Nr. 4', '0765123425','tinav@gmail.com');
+
+
+INSERT INTO OFERTA VALUES (1,1,'V','A',1,'Stejar', 150,1999,20000,'Mobilat','3');
+INSERT INTO OFERTA VALUES (2,3,'I','C',2,'Pinului', 300,2001,70000,'Mobilat','6');
+INSERT INTO OFERTA VALUES (3,2,'V','C',5,'Pacii', 700,2004,100000,'Mobilat','43');
+INSERT INTO OFERTA VALUES (4,5,'V','T',6,'Vantului', 500,1995,10000,'Mobilat','89');
+INSERT INTO OFERTA VALUES (5,6,'I','A',4,'Teiului', 200,1997,40000,'Mobilat','13');
+INSERT INTO OFERTA VALUES (6,3,'V','A',9,'Feroviarilor', 150,2010,50000,'Mobilat','90');
+INSERT INTO OFERTA VALUES (7,4,'V','C',5,'Garii', 800,2004,100000,'La rosu','50');
+INSERT INTO OFERTA VALUES (8,8,'V','T',6,'Morii', 500,1995,10000,'Mobilat','56');
+INSERT INTO OFERTA VALUES (9,7,'I','A',4,'Donici', 100,1997,40000,'Nemobilat','13');
+INSERT INTO OFERTA VALUES (10,9,'V','A',9,'Unirii', 150,2010,50000,'Mobilat','100');
+INSERT INTO OFERTA VALUES (11,10,'V','A',7,'Pinului', 180,1999,20000,null,'3');
+INSERT INTO OFERTA VALUES (12,11,'V','C',2,'Stejar', 300,2001,70000,'Mobilat','6');
+INSERT INTO OFERTA VALUES (13,12,'V','C',2,'Pacii', 700,2004,100000,'Mobilat','43');
+INSERT INTO OFERTA VALUES (14,13,'V','A',2,'Muncii', 500,1995,10000,'Mobilat','89');
+INSERT INTO OFERTA VALUES (15,14,'V','A',7,'Teiului', 200,1997,40000,'Mobilat','13');
+INSERT INTO OFERTA VALUES (16,15,'V','A',9,'Tecuci', 150,2010,55000,'Mobilat','90');
+INSERT INTO OFERTA VALUES (17,6,'V','C',7,'Florilor', 800,2004,100000,'La rosu','50');
+INSERT INTO OFERTA VALUES (18,8,'V','C',2,'Smardan', 500,1995,10000,'Mobilat','56');
+INSERT INTO OFERTA VALUES (19,7,'V','A',7,'Donici', 160,1997,40000,null,'13');
+INSERT INTO OFERTA VALUES (20,11,'V','A',9,'Unirii', 150,2010,50000,'Mobilat','100');
+INSERT INTO OFERTA VALUES (21,5,'V','A',2,'Unirii', 170,2010,50000,null,'140');
+INSERT INTO OFERTA VALUES (22,6,'V','A',5,'Unirii', 170,2011,60000,null,'140');
+INSERT INTO OFERTA VALUES (23,11,'V','C',7,'Unirii', 700,2006,200000,null,'23');
+ 
+
+INSERT INTO cerere VALUES (1,1,'C','A',1,30000,150,2020);
+INSERT INTO cerere VALUES (2,3,'I','C',3,70000,300,2002);
+INSERT INTO cerere VALUES (3,8,'C','C',7,200000, 700,2005);
+INSERT INTO cerere VALUES (4,10,'C','T',6,200000, 500,2021);
+INSERT INTO cerere VALUES (5,2,'I','A',4,50000, 200,2001);
+INSERT INTO cerere VALUES (6,7,'C','A',9,10000, 150,2011);
+INSERT INTO cerere VALUES (7,4,'C','C',2,100000, 700,2019);
+INSERT INTO cerere VALUES (8,5,'C','T',8,300000, 500,2021);
+INSERT INTO cerere VALUES (9,6,'I','A',10,50000, 200,2009);
+INSERT INTO cerere VALUES (10,9,'C','A',5,60000, 150,2011);
+INSERT INTO cerere VALUES (11,2,'C','A',1,20000,180,2000);
+INSERT INTO cerere VALUES (12,3,'C','A',2,50000,170,2010);
+INSERT INTO cerere VALUES (13,1,'C','A',5,60000,160,2010);
+
+
+
+INSERT INTO contract VALUES (1,2,1,SYSDATE,7);
+INSERT INTO contract VALUES (2,4,2,SYSDATE,5);
+INSERT INTO contract VALUES (3,4,6,SYSDATE,5);
+INSERT INTO contract VALUES (4,4,7,SYSDATE,10);
+INSERT INTO contract VALUES (5,2,2,SYSDATE,5);
+INSERT INTO contract VALUES (6,3,7,SYSDATE,5);
+INSERT INTO contract VALUES (7,3,10,SYSDATE,5);
+INSERT INTO contract VALUES (8,4,2,SYSDATE,10);
+INSERT INTO contract VALUES (9,4,6,SYSDATE,20);
+INSERT INTO contract VALUES (10,1,1,SYSDATE,10);
+INSERT INTO contract VALUES (11,1,11,SYSDATE,10);
+INSERT INTO contract VALUES (12,2,12,SYSDATE,10);
+INSERT INTO contract VALUES (13,2,13,SYSDATE,10);
+INSERT INTO contract VALUES (14,4,14,SYSDATE,5);
+INSERT INTO contract VALUES (15,3,15,SYSDATE,10);
+INSERT INTO contract VALUES (16,3,9,SYSDATE,10);
+
+
+INSERT INTO TRANZACTIE VALUES(1,1,1,1,SYSDATE,10000);
+INSERT INTO TRANZACTIE VALUES(2,2,2,2,SYSDATE,20000);
+INSERT INTO TRANZACTIE VALUES(3,3,3,5,SYSDATE,300000);
+INSERT INTO TRANZACTIE VALUES(4,3,4,4,SYSDATE,40000);
+INSERT INTO TRANZACTIE VALUES(5,3,5,3,SYSDATE,50000);
+INSERT INTO TRANZACTIE VALUES(6,4,6,2,SYSDATE,90000);
+INSERT INTO TRANZACTIE VALUES(7,7,1,6,SYSDATE,10000);
+INSERT INTO TRANZACTIE VALUES(8,8,2,7,SYSDATE,20000);
+INSERT INTO TRANZACTIE VALUES(9,9,3,8,SYSDATE,30000);
+INSERT INTO TRANZACTIE VALUES(10,10,4,9,SYSDATE,40000);
+INSERT INTO TRANZACTIE VALUES(11,1,11,14,SYSDATE,20000);
+INSERT INTO TRANZACTIE VALUES(12,4,12,21,SYSDATE,50000);
+
+COMMIT;
+
+--6
+CREATE OR REPLACE PROCEDURE cerinta6 
+IS 
+TYPE T_id_loc IS TABLE OF localitate.id_localitate%TYPE INDEX BY PLS_INTEGER;
+TYPE T_den_loc IS TABLE OF localitate.denumire%TYPE;
+TYPE T_den_jud IS VARRAY(50) OF judet.denumire%TYPE;
+--record pentru datele unei oferte  ++ vom face join pt numele clientului(ofertantului)
+TYPE T_of_record IS RECORD ( loc NUMBER(10), ofertant VARCHAR(30),strada VARCHAR(30),numar VARCHAR(10),
+        suprafata NUMBER(10), an_constructie NUMBER(4), pret NUMBER(15), op CHAR(1), tip_propr VARCHAR(15), descr VARCHAR(30));
+TYPE T_of IS TABLE OF T_of_record INDEX BY PLS_INTEGER;        
+v_id_loc T_id_loc;
+v_den_loc T_den_loc;
+v_den_jud T_den_jud;
+v_of T_of;
+BEGIN
+ SELECT id_localitate BULK COLLECT INTO v_id_loc FROM localitate ORDER BY id_localitate;
+ DBMS_OUTPUT.PUT('Tablou indexat: ');
+ FOR i IN v_id_loc.FIRST..v_id_loc.LAST LOOP
+    DBMS_OUTPUT.PUT(v_id_loc(i) || ' ');
+ END LOOP;
+DBMS_OUTPUT.NEW_LINE;
+
+ SELECT denumire BULK COLLECT INTO v_den_loc FROM localitate ORDER BY id_localitate;
+ DBMS_OUTPUT.PUT('Tablou imbricat: ');
+ FOR i IN v_den_loc.FIRST..v_den_loc.LAST LOOP
+    DBMS_OUTPUT.PUT(v_den_loc(i) || ' ');
+ END LOOP;
+DBMS_OUTPUT.NEW_LINE;
+
+ SELECT  j.denumire BULK COLLECT INTO v_den_jud
+    FROM localitate l join judet j on l.id_judet=j.id_judet
+    order by l.id_localitate;
+ DBMS_OUTPUT.PUT('Vector:          ');
+  FOR i IN v_den_jud.FIRST..v_den_jud.LAST LOOP
+    DBMS_OUTPUT.PUT(v_den_jud(i) || ' ');
+ END LOOP;
+DBMS_OUTPUT.NEW_LINE;
+DBMS_OUTPUT.NEW_LINE;
+
+SELECT  O.ID_LOCALITATE LOC, INITCAP(TRIM(C.NUME)) || '  ' || 
+INITCAP(TRIM(C.PRENUME)) OFERTANT, STRADA, NUMAR, SUPRAFATA, AN_CONSTRUCTIE, PRET, ID_OPERATIE OP, DECODE(ID_PROPRIETATE,'C','CASA','A','APARTAMENT','T','TEREN') TIP_PROPR, NVL(O.DESCRIERE,'') DESCR 
+BULK COLLECT INTO v_of
+FROM OFERTA O
+JOIN CLIENT C ON O.ID_CLIENT=C.ID_CLIENT
+WHERE NOT EXISTS (  SELECT * FROM TRANZACTIE T
+                                       WHERE T.ID_OFERTA = O.ID_OFERTA
+                                     ) --preluam doar ofertele disponibile, nu si cele tranzactionate
+ORDER BY O.ID_LOCALITATE, O.ID_OPERATIE, O.ID_PROPRIETATE, O.STRADA;
+   DBMS_OUTPUT.PUT_LINE('------------------------------------------------------------------------------------------------');
+   DBMS_OUTPUT.PUT_LINE(' JUDET     LOCALITATE   OFERTANT           STRADA NUMAR SUPRAFATA CONSTRUIT OP TIP_IMOBIL DESCR');
+   DBMS_OUTPUT.PUT_LINE('------------------------------------------------------------------------------------------------');
+  FOR i IN v_of.FIRST..v_of.LAST LOOP
+    DBMS_OUTPUT.PUT_LINE(RPAD(v_den_jud(v_of(i).loc),10,' ') || ' ' || RPAD(v_den_loc(v_of(i).loc),10,' ') || ' '|| RPAD(v_of(i).ofertant,20,' ') || ' '|| v_of(i).strada || ' '|| v_of(i).numar || ' '|| v_of(i).suprafata || ' '
+              || v_of(i).an_constructie || ' '|| v_of(i).pret || ' '|| v_of(i).op || ' '|| v_of(i).tip_propr || ' '|| v_of(i).descr || ' ');
+ END LOOP;
+DBMS_OUTPUT.NEW_LINE;
+END cerinta6;
+/
+EXECUTE cerinta6;
+
+
+--7
+CREATE OR REPLACE PROCEDURE cerinta7 IS
+ CURSOR c_of (p_id_localitate localitate.id_localitate%type) IS 
+  (SELECT o.id_localitate, COUNT(*) AS nr_of  --id localitate si nr de oferte/localitate
+   FROM oferta o WHERE o.id_localitate=p_id_localitate and o.id_proprietate='A'
+   GROUP BY o.id_localitate);
+   
+ CURSOR c_cer (p_id_localitate localitate.id_localitate%type) IS 
+  (SELECT c.id_localitate, COUNT(*) AS nr_cer 
+   FROM cerere c WHERE c.id_localitate=p_id_localitate and c.id_proprietate='A'
+   GROUP BY c.id_localitate);
+   
+ v_id_loc NUMBER(4);
+ v_of NUMBER(4);
+ v_cer NUMBER(4);
+
+BEGIN
+ FOR i IN (SELECT id_localitate, denumire FROM localitate) LOOP --ciclu cursor cu subcereri
+	OPEN c_of(i.id_localitate);
+	FETCH c_of INTO v_id_loc, v_of;
+	OPEN c_cer(i.id_localitate);
+	FETCH c_cer INTO v_id_loc, v_cer;
+         IF (v_cer  < v_of) THEN
+           DBMS_OUTPUT.PUT_LINE(i.denumire || ' cereri ' || v_cer || ' oferte ' || v_of);
+         END IF;
+       CLOSE c_of;
+       CLOSE c_cer;
+ END LOOP;
+END cerinta7;
+/
+EXECUTE cerinta7;
+
+--8
+CREATE OR REPLACE FUNCTION f8 (v_prenume angajat.prenume%TYPE DEFAULT 'Vasile', data_init contract.data%TYPE DEFAULT TO_DATE('01/01/2023','DD/MM/YYYY'), data_fin contract.data%TYPE DEFAULT TO_DATE('31/12/2024','DD/MM/YYYY')) 
+RETURN NUMBER IS 
+v_nr_contr NUMBER(4);
+
+v_nr_ang NUMBER(2);
+exception1 EXCEPTION;
+exception2 EXCEPTION;
+BEGIN
+--numaram cati angajati mai au prenumele respectiv pt a arunca erorile dupa caz
+  SELECT COUNT(id_angajat)
+  INTO v_nr_ang
+  FROM angajat
+  WHERE UPPER(prenume) = UPPER(v_prenume);
+  
+  IF (v_nr_ang = 0) THEN RAISE exception1;
+  END IF;
+  IF (v_nr_ang > 1) THEN RAISE exception2;
+  END IF;
+  
+ --in nc s-a calculat nr de contracte pt fiecare angajat care are minim o cerere sau o o oferta
+ SELECT nc.nr_contr INTO v_nr_contr FROM angajat a
+ LEFT JOIN  (SELECT c.id_angajat, COUNT(*) as nr_contr FROM  contract c
+  	WHERE c.data BETWEEN data_init AND data_fin -- verificam data
+AND ( (c.id_client IN (SELECT distinct id_client FROM cerere)) OR 
+                                                   (c.id_client IN (SELECT distinct id_client FROM oferta)) )  --verificam sa aiba minim o cerere/ oferta
+  	GROUP BY c.id_angajat) nc
+  ON a.id_angajat = nc.id_angajat
+ WHERE UPPER(a.prenume) = UPPER(v_prenume);
+
+ RETURN NVL(v_nr_contr,0);
+ 
+ EXCEPTION 
+   WHEN exception1 THEN 
+     BEGIN  
+        DBMS_OUTPUT.PUT_LINE('EROARE: Nu exista niciun angajat cu prenumele dat!');
+        RETURN -1; 
+     END; 
+   WHEN exception2 THEN 
+     BEGIN  
+        DBMS_OUTPUT.PUT_LINE('EROARE: Exista mai multi angajati cu prenumele dat!');
+        RETURN -1; 
+     END;
+   WHEN OTHERS THEN RAISE_APPLICATION_ERROR(-20002,'Alta eroare!'); 
+END f8; 
+/
+BEGIN 
+  DBMS_OUTPUT.PUT_LINE('Numarul de contracte incheiate este '|| f8); 
+END; 
+/
+BEGIN 
+  DBMS_OUTPUT.PUT_LINE('Numarul de contracte incheiate este '|| f8('MMM')); 
+END; 
+/
+BEGIN 
+  DBMS_OUTPUT.PUT_LINE('Numarul de contracte incheiate este '|| f8('Raluca')); 
+END; 
+
+--9
+CREATE OR REPLACE PROCEDURE
+    OF_PT_CER(v_id_cerere IN cerere.id_cerere%TYPE,
+              v_id_oferta OUT oferta.id_oferta%type) IS
+   v_id_localitate localitate.id_localitate%TYPE;
+   v_id_proprietate proprietate.id_proprietate%TYPE;
+   v_buget cerere.buget%TYPE;
+   v_supraf_min cerere.suprafata_minima%TYPE;
+   v_an_constructie cerere.an_constructie%TYPE;
+   v_id_operatie operatie.id_operatie%TYPE;
+   
+   v_nr NUMBER(3);
+   v_nume client.nume%TYPE;
+   v_prenume client.prenume%TYPE;
+   v_denumire localitate.denumire%TYPE;
+      
+ BEGIN
+   --verificam daca exista cerere cu id-ul dat
+      SELECT COUNT(*) INTO v_nr FROM cerere WHERE id_cerere=v_id_cerere;
+      IF (v_nr=0) THEN 
+          DBMS_OUTPUT.PUT_LINE('Nu exista cerere cu id-ul dat!');
+          RETURN;
+      END IF;
+
+      --pun toate info. despre cererea data in variabile
+      SELECT id_localitate, id_proprietate,buget, suprafata_minima, an_constructie, id_operatie
+      INTO v_id_localitate, v_id_proprietate, v_buget, v_supraf_min, v_an_constructie, v_id_operatie
+      FROM cerere
+      WHERE id_cerere=v_id_cerere;
+      
+     SELECT id_oferta,c.nume, c.prenume,l.denumire INTO v_id_oferta, v_nume,v_prenume,v_denumire
+     FROM oferta o
+     JOIN client c on o.id_client=c.id_client
+     JOIN localitate l on o.id_localitate=l.id_localitate
+     WHERE o.id_localitate = v_id_localitate AND  o.id_proprietate=v_id_proprietate AND
+           o.pret<=v_buget AND o.suprafata>=v_supraf_min AND ABS(o.an_constructie-v_an_constructie)<=10
+          AND ((v_id_operatie='C' AND o.id_operatie='V') OR (v_id_operatie='I' AND o.id_operatie='I'))
+           AND o.id_oferta NOT IN (SELECT id_oferta
+                                   FROM tranzactie)
+           AND o.id_client IN (SELECT id_client
+                               FROM contract);
+    DBMS_OUTPUT.PUT_LINE('Oferta ' || v_id_oferta || ' facuta de ' || v_nume || ' ' || v_prenume || ' in localitatea ' 
+                        || v_denumire); 
+     
+     EXCEPTION
+     WHEN NO_DATA_FOUND THEN
+       RAISE_APPLICATION_ERROR(-20000, 'Nu exista oferta care sa respecte cererea!');
+     WHEN TOO_MANY_ROWS THEN
+       RAISE_APPLICATION_ERROR(-20001,'Exista mai multe oferte care respecta cererea!');
+     WHEN OTHERS THEN
+       RAISE_APPLICATION_ERROR(-20002,'Alta eroare!');
+ END OF_PT_CER;
+/
+ --APELARE
+ DECLARE
+ v_oferta oferta.id_oferta%type;
+ BEGIN
+  --OF_PT_CER(10,v_oferta); -- o singura oferta potrivita
+  OF_PT_CER(3,v_oferta); --doua oferte potrivite
+  --OF_PT_CER(5,v_oferta); --niciuna
+  --OF_PT_CER(100,v_oferta);  --nu exista cererea
+  
+ END;
+
+
+
+--10
+--blocheaza tabela proprietate la actualizari
+CREATE OR REPLACE TRIGGER trig_10
+  BEFORE INSERT OR UPDATE OR DELETE ON proprietate
+BEGIN
+  CASE 
+    WHEN INSERTING THEN RAISE_APPLICATION_ERROR(-20001,'Nu mai pot fi adaugate alte tipuri de proprietati!');
+    WHEN UPDATING THEN RAISE_APPLICATION_ERROR(-20002,'Nu pot fi modificate tipurile de proprietati existente!');
+    WHEN DELETING THEN RAISE_APPLICATION_ERROR(-20003,'Nu pot fi sterse tipurile de proprietati!');
+  END CASE;
+END;
+
+INSERT INTO proprietate VALUES ('B','Bloc');
+
+UPDATE proprietate
+SET id_proprietate='P'
+WHERE id_proprietate='A';
+
+DELETE FROM proprietate
+WHERE id_proprietate='B';
+
+--11
+--impune ca înaintea realizării unei tranzacții, ambele părți să fi încheiat contract cu agenția
+CREATE OR REPLACE TRIGGER trig_11
+ BEFORE INSERT ON tranzactie
+FOR EACH ROW
+DECLARE
+ v_nr_contr_cer NUMBER(2) := 0;
+ v_nr_contr_of NUMBER(2) := 0;
+ 
+BEGIN
+   SELECT COUNT(*)
+   INTO v_nr_contr_cer
+   FROM contract
+   WHERE id_client IN (SELECT id_client FROM cerere WHERE id_cerere=:NEW.id_cerere);
+   
+   SELECT COUNT(*)
+   INTO v_nr_contr_of
+   FROM contract
+   WHERE id_client IN (SELECT id_client FROM oferta WHERE id_oferta=:NEW.id_oferta);
+   
+   IF (v_nr_contr_of=0 OR v_nr_contr_cer=0) THEN
+     RAISE_APPLICATION_ERROR(-20001,'Tranzactia nu poate fi efectuata. Unul dintre clienti nu are contract.');
+    END IF;
+END;
+
+--declansare trigger
+INSERT INTO TRANZACTIE VALUES(13,4,7,21,SYSDATE,50000);
+
+
+--12
+--blocheaza operatia de tip drop pt tabele
+CREATE OR REPLACE TRIGGER trig_12
+  BEFORE DROP ON SCHEMA
+BEGIN
+  IF (SYS.DICTIONARY_OBJ_TYPE LIKE 'TABLE') THEN
+     RAISE_APPLICATION_ERROR(-20005,'Nu este permisa stergerea obiectelor de tip table!');
+  END IF;
+END;
+
+
+DROP TABLE MASINA;
+
+--13
+--pachet 13
+CREATE OR REPLACE PACKAGE cerinta13 AS 
+PROCEDURE cerinta6;
+PROCEDURE cerinta7;
+FUNCTION f8(v_prenume angajat.prenume%TYPE DEFAULT 'Vasile', data_init contract.data%TYPE DEFAULT TO_DATE('01/01/2023','DD/MM/YYYY'), data_fin contract.data%TYPE DEFAULT TO_DATE('31/12/2024','DD/MM/YYYY'))
+RETURN NUMBER;
+PROCEDURE OF_PT_CER(v_id_cerere IN cerere.id_cerere%TYPE, v_id_oferta OUT oferta.id_oferta%type);
+END cerinta13;
+/
+CREATE OR REPLACE PACKAGE BODY cerinta13 as
+--6
+PROCEDURE cerinta6 
+IS 
+TYPE T_id_loc IS TABLE OF localitate.id_localitate%TYPE INDEX BY PLS_INTEGER; 
+TYPE T_den_loc IS TABLE OF localitate.denumire%TYPE;
+TYPE T_den_jud IS VARRAY(50) OF judet.denumire%TYPE;
+--record pt datele unei oferte
+TYPE T_of_record IS RECORD ( loc NUMBER(10), ofertant VARCHAR(30),strada VARCHAR(30),numar VARCHAR(10),
+        suprafata NUMBER(10), an_constructie NUMBER(4), pret NUMBER(15), op CHAR(1), tip_propr VARCHAR(15), descr VARCHAR(30));
+TYPE T_of IS TABLE OF T_of_record INDEX BY PLS_INTEGER;        
+v_id_loc T_id_loc;
+v_den_loc T_den_loc;
+v_den_jud T_den_jud;
+v_of T_of;
+BEGIN
+ SELECT id_localitate BULK COLLECT INTO v_id_loc FROM localitate ORDER BY id_localitate;
+ DBMS_OUTPUT.PUT('Tablou indexat: ');
+ FOR i IN v_id_loc.FIRST..v_id_loc.LAST LOOP
+    DBMS_OUTPUT.PUT(v_id_loc(i) || ' ');
+ END LOOP;
+DBMS_OUTPUT.NEW_LINE;
+
+ SELECT denumire BULK COLLECT INTO v_den_loc FROM localitate ORDER BY id_localitate;
+ DBMS_OUTPUT.PUT('Tablou imbricat: ');
+ FOR i IN v_den_loc.FIRST..v_den_loc.LAST LOOP
+    DBMS_OUTPUT.PUT(v_den_loc(i) || ' ');
+ END LOOP;
+DBMS_OUTPUT.NEW_LINE;
+
+ SELECT  j.denumire BULK COLLECT INTO v_den_jud
+    FROM localitate l join judet j on l.id_judet=j.id_judet
+    order by l.id_localitate;
+ DBMS_OUTPUT.PUT('Vector:          ');
+  FOR i IN v_den_jud.FIRST..v_den_jud.LAST LOOP
+    DBMS_OUTPUT.PUT(v_den_jud(i) || ' ');
+ END LOOP;
+DBMS_OUTPUT.NEW_LINE;
+DBMS_OUTPUT.NEW_LINE;
+
+SELECT  O.ID_LOCALITATE LOC, INITCAP(TRIM(C.NUME)) || '  ' || 
+INITCAP(TRIM(C.PRENUME)) OFERTANT, STRADA, NUMAR, SUPRAFATA, AN_CONSTRUCTIE, PRET, ID_OPERATIE OP, DECODE(ID_PROPRIETATE,'C','CASA','A','APARTAMENT','T','TEREN') TIP_PROPR, NVL(O.DESCRIERE,'') DESCR 
+BULK COLLECT INTO v_of
+FROM OFERTA O
+JOIN CLIENT C ON O.ID_CLIENT=C.ID_CLIENT
+WHERE NOT EXISTS (  SELECT * FROM TRANZACTIE T
+                                       WHERE T.ID_OFERTA = O.ID_OFERTA
+                                     ) --preluam doar ofertele disponibile, nu si cele tranzactionate
+ORDER BY O.ID_LOCALITATE, O.ID_OPERATIE, O.ID_PROPRIETATE, O.STRADA;
+   DBMS_OUTPUT.PUT_LINE('------------------------------------------------------------------------------------------------');
+   DBMS_OUTPUT.PUT_LINE(' JUDET     LOCALITATE   OFERTANT           STRADA NUMAR SUPRAFATA CONSTRUIT OP TIP_IMOBIL DESCR');
+   DBMS_OUTPUT.PUT_LINE('------------------------------------------------------------------------------------------------');
+  FOR i IN v_of.FIRST..v_of.LAST LOOP
+    DBMS_OUTPUT.PUT_LINE(RPAD(v_den_jud(v_of(i).loc),10,' ') || ' ' || RPAD(v_den_loc(v_of(i).loc),10,' ') || ' '|| RPAD(v_of(i).ofertant,20,' ') || ' '|| v_of(i).strada || ' '|| v_of(i).numar || ' '|| v_of(i).suprafata || ' '
+              || v_of(i).an_constructie || ' '|| v_of(i).pret || ' '|| v_of(i).op || ' '|| v_of(i).tip_propr || ' '|| v_of(i).descr || ' ');
+ END LOOP;
+DBMS_OUTPUT.NEW_LINE;
+END cerinta6;
+
+--7
+PROCEDURE cerinta7 IS
+ CURSOR c_of (p_id_localitate localitate.id_localitate%type) IS 
+  (SELECT o.id_localitate, COUNT(*) AS nr_of  --id localitate si nr de oferte/localitate
+   FROM oferta o WHERE o.id_localitate=p_id_localitate and o.id_proprietate='A'
+   GROUP BY o.id_localitate);
+   
+ CURSOR c_cer (p_id_localitate localitate.id_localitate%type) IS 
+  (SELECT c.id_localitate, COUNT(*) AS nr_cer 
+   FROM cerere c WHERE c.id_localitate=p_id_localitate and c.id_proprietate='A'
+   GROUP BY c.id_localitate);
+   
+ v_id_loc NUMBER(4);
+ v_of NUMBER(4);
+ v_cer NUMBER(4);
+
+BEGIN
+ FOR i IN (SELECT id_localitate, denumire FROM localitate) LOOP --ciclu cursor cu subcereri
+	OPEN c_of(i.id_localitate);
+	FETCH c_of INTO v_id_loc, v_of;
+	OPEN c_cer(i.id_localitate);
+	FETCH c_cer INTO v_id_loc, v_cer;
+         IF (v_cer  < v_of) THEN
+           DBMS_OUTPUT.PUT_LINE(i.denumire || ' cereri ' || v_cer || ' oferte ' || v_of);
+         END IF;
+       CLOSE c_of;
+       CLOSE c_cer;
+ END LOOP;
+END cerinta7;
+
+
+--8
+FUNCTION f8 (v_prenume angajat.prenume%TYPE DEFAULT 'Vasile', data_init contract.data%TYPE DEFAULT TO_DATE('01/01/2023','DD/MM/YYYY'), data_fin contract.data%TYPE DEFAULT TO_DATE('31/12/2024','DD/MM/YYYY')) 
+RETURN NUMBER IS 
+v_nr_contr NUMBER(4);
+
+v_nr_ang NUMBER(2);
+exception1 EXCEPTION;
+exception2 EXCEPTION;
+BEGIN
+  SELECT COUNT(id_angajat)
+  INTO v_nr_ang
+  FROM angajat
+  WHERE UPPER(prenume) = UPPER(v_prenume);
+  
+  IF (v_nr_ang = 0) THEN RAISE exception1;
+  END IF;
+  IF (v_nr_ang > 1) THEN RAISE exception2;
+  END IF;
+  
+ --in nc s-a calculat nr de contracte pt fiecare angajat care are minim o cerere sau o o oferta
+ SELECT nc.nr_contr INTO v_nr_contr FROM angajat a
+ LEFT JOIN  (SELECT c.id_angajat, COUNT(*) as nr_contr FROM  contract c
+  	WHERE c.data BETWEEN data_init AND data_fin AND ( (c.id_client IN (SELECT distinct id_client FROM cerere)) OR 
+                                                   (c.id_client IN (SELECT distinct id_client FROM oferta)) )
+  	GROUP BY c.id_angajat) nc
+  ON a.id_angajat = nc.id_angajat
+ WHERE UPPER(a.prenume) = UPPER(v_prenume);
+
+ RETURN NVL(v_nr_contr,0);
+ 
+ EXCEPTION 
+   WHEN exception1 THEN 
+     BEGIN  
+        DBMS_OUTPUT.PUT_LINE('EROARE: Nu exista niciun angajat cu prenumele dat!');
+        RETURN -1; 
+     END; 
+   WHEN exception2 THEN 
+     BEGIN  
+        DBMS_OUTPUT.PUT_LINE('EROARE: Exista mai multi angajati cu prenumele dat!');
+        RETURN -1; 
+     END;
+   WHEN OTHERS THEN RAISE_APPLICATION_ERROR(-20002,'Alta eroare!'); 
+END f8; 
+
+--9
+PROCEDURE
+    OF_PT_CER(v_id_cerere IN cerere.id_cerere%TYPE,
+              v_id_oferta OUT oferta.id_oferta%type) IS
+   v_id_localitate localitate.id_localitate%TYPE;
+   v_id_proprietate proprietate.id_proprietate%TYPE;
+   v_buget cerere.buget%TYPE;
+   v_supraf_min cerere.suprafata_minima%TYPE;
+   v_an_constructie cerere.an_constructie%TYPE;
+   v_id_operatie operatie.id_operatie%TYPE;
+   
+   v_nr NUMBER(3);
+   v_nume client.nume%TYPE;
+   v_prenume client.prenume%TYPE;
+   v_denumire localitate.denumire%TYPE;
+      
+ BEGIN
+      SELECT COUNT(*) INTO v_nr FROM cerere WHERE id_cerere=v_id_cerere;
+      IF (v_nr=0) THEN 
+          DBMS_OUTPUT.PUT_LINE('Nu exista cerere cu id-ul dat!');
+          RETURN;
+      END IF;
+      SELECT id_localitate, id_proprietate,buget, suprafata_minima, an_constructie, id_operatie
+      INTO v_id_localitate, v_id_proprietate, v_buget, v_supraf_min, v_an_constructie, v_id_operatie
+      FROM cerere
+      WHERE id_cerere=v_id_cerere;
+      
+     SELECT id_oferta,c.nume, c.prenume,l.denumire INTO v_id_oferta, v_nume, v_prenume, v_denumire
+     FROM oferta o
+     JOIN client c on o.id_client=c.id_client
+     JOIN localitate l on o.id_localitate=l.id_localitate
+     WHERE o.id_localitate = v_id_localitate AND  o.id_proprietate=v_id_proprietate AND
+           o.pret<=v_buget AND o.suprafata>=v_supraf_min AND ABS(o.an_constructie-v_an_constructie)<=10
+          AND ((v_id_operatie='C' AND o.id_operatie='V') OR (v_id_operatie='I' AND o.id_operatie='I'))
+           AND o.id_oferta NOT IN (SELECT id_oferta
+                                   FROM tranzactie)
+           AND o.id_client IN (SELECT id_client
+                               FROM contract);
+    DBMS_OUTPUT.PUT_LINE ('Oferta ' || v_id_oferta || ' facuta de ' || v_nume || ' ' || v_prenume || ' in localitatea ' || v_denumire); 
+     
+     EXCEPTION
+     WHEN NO_DATA_FOUND THEN
+       RAISE_APPLICATION_ERROR(-20000, 'Nu exista oferta care sa respecte cererea!');
+     WHEN TOO_MANY_ROWS THEN
+       RAISE_APPLICATION_ERROR(-20001,'Exista mai multe oferte care respecta cererea!');
+     WHEN OTHERS THEN
+       RAISE_APPLICATION_ERROR(-20002,'Alta eroare!');
+ END OF_PT_CER;
+
+END cerinta13;
+
+--teste
+EXECUTE cerinta13.cerinta6;
+
+DECLARE
+nr_contr NUMBER(2);
+BEGIN
+nr_contr:= cerinta13.f8;
+DBMS_OUTPUT.PUT_LINE(nr_contr);
+END; 
+
+DECLARE
+v_oferta oferta.id_oferta%TYPE;
+BEGIN
+cerinta13.of_pt_cer(10,v_oferta);
+END;
+
+
+
+
+
+
+
+--14
+--asocierea cererilor cu ofertele potrivite si invers
+CREATE OR REPLACE PACKAGE cerinta14 AS
+ CURSOR of_disponibile(pid_oferta oferta.id_oferta%TYPE) RETURN dual%rowtype;
+ CURSOR cer_disponibile(pid_cerere cerere.id_cerere%TYPE) RETURN dual%rowtype;
+ TYPE t_detalii_of IS RECORD (
+ 	id_oferta oferta.id_oferta%TYPE,
+	nume client.nume%TYPE, prenume client.prenume%TYPE,
+	id_operatie oferta.id_operatie%TYPE, id_proprietate oferta.id_proprietate%TYPE,
+	id_localitate oferta.id_localitate%TYPE, loc localitate.denumire%TYPE,
+	suprafata oferta.suprafata%TYPE, an_constructie oferta.an_constructie%TYPE, pret oferta.pret%TYPE,
+	descriere oferta.descriere%TYPE,strada oferta.strada%TYPE, numar oferta.numar%TYPE
+ );
+ TYPE t_detalii_cer IS RECORD (
+ 	id_cerere cerere.id_cerere%TYPE,
+	nume client.nume%TYPE, prenume client.prenume%TYPE,
+	id_operatie cerere.id_operatie%TYPE, id_proprietate cerere.id_proprietate%TYPE,
+	id_localitate cerere.id_localitate%TYPE, loc localitate.denumire%TYPE,
+	suprafata cerere.suprafata_minima%TYPE, an_constructie cerere.an_constructie%TYPE, pret cerere.buget%TYPE
+ );
+ TYPE tablou_indexat_of IS TABLE OF t_detalii_of INDEX BY PLS_INTEGER;
+ TYPE tablou_indexat_cer IS TABLE OF t_detalii_cer INDEX BY PLS_INTEGER;
+ FUNCTION are_contract_cer(pid_cerere cerere.id_cerere%TYPE) RETURN NUMBER;
+ FUNCTION are_contract_of(pid_oferta oferta.id_oferta%TYPE) RETURN NUMBER;
+ FUNCTION disponibilitate_cer(pid_cerere cerere.id_cerere%TYPE) RETURN NUMBER;
+ FUNCTION disponibilitate_of(pid_oferta oferta.id_oferta%TYPE) RETURN NUMBER;
+ PROCEDURE afis_of_potriv(pid_cerere cerere.id_cerere%TYPE);
+ PROCEDURE afis_cer_potriv(pid_oferta oferta.id_oferta%TYPE);
+END cerinta14;
+/
+CREATE OR REPLACE PACKAGE BODY cerinta14 AS
+ -- verif daca oferta cu id-ul dat ca parametru nu e tranzactionata; 1=netranz.
+ CURSOR of_disponibile(pid_oferta oferta.id_oferta%TYPE) RETURN dual%rowtype IS 
+ SELECT COUNT(*) FROM oferta WHERE id_oferta=pid_oferta AND id_oferta NOT IN (SELECT id_oferta FROM tranzactie);
+ CURSOR cer_disponibile(pid_cerere cerere.id_cerere%TYPE) RETURN dual%rowtype IS 
+ SELECT COUNT(*) FROM cerere WHERE id_cerere=pid_cerere AND id_cerere NOT IN (SELECT id_cerere FROM tranzactie);
+ 
+ 
+ --verificam daca clientul care face cererea are contract cu agentia
+ FUNCTION are_contract_cer(pid_cerere cerere.id_cerere%TYPE) RETURN NUMBER IS
+  v_nr NUMBER;
+  BEGIN
+    SELECT COUNT(*) INTO v_nr 
+    FROM contract WHERE id_client IN (SELECT id_client FROM cerere WHERE id_cerere=pid_cerere);
+    RETURN v_nr; --v_nr=0 rezulta ca clientul nu are contract cu agentia
+  END;
+  
+  --verificam daca clientul care face oferta are contract cu agentia
+ FUNCTION are_contract_of(pid_oferta oferta.id_oferta%TYPE) RETURN NUMBER IS
+  v_nr NUMBER;
+  BEGIN
+    SELECT COUNT(*) INTO v_nr 
+    FROM contract WHERE id_client IN (SELECT id_client FROM oferta WHERE id_oferta=pid_oferta);
+    RETURN v_nr;
+  END;
+
+  FUNCTION disponibilitate_cer(pid_cerere cerere.id_cerere%TYPE) RETURN NUMBER IS
+    v_nr NUMBER;
+   BEGIN
+     OPEN cer_disponibile(pid_cerere); --verificam disponibilitatea cer. cu ajutorul cursorului
+     FETCH cer_disponibile INTO v_nr;
+     CLOSE cer_disponibile;
+     RETURN v_nr;
+   END;
+   
+  FUNCTION disponibilitate_of(pid_oferta oferta.id_oferta%TYPE) RETURN NUMBER IS
+    v_nr NUMBER;
+   BEGIN
+     OPEN of_disponibile(pid_oferta);
+     FETCH of_disponibile INTO v_nr;
+     CLOSE of_disponibile;
+     RETURN v_nr;
+   END;
+
+ PROCEDURE afis_of_potriv(pid_cerere cerere.id_cerere%TYPE) IS
+  t tablou_indexat_of;
+  cer t_detalii_cer;
+  i NUMBER(3);
+  BEGIN
+    IF disponibilitate_cer(pid_cerere)=0 THEN
+        DBMS_OUTPUT.PUT_LINE ('Cererea ' || pid_cerere || ' nu este disponibila!');
+        RETURN;
+    END IF;
+    --preia detalii cerere din tabela in variabila cer
+    SELECT id_cerere, c.nume, c.prenume, id_operatie, id_proprietate,o.id_localitate, l.denumire as loc, suprafata_minima as suprafata, an_constructie, buget as pret
+    INTO cer
+    FROM cerere o
+    JOIN client c ON o.id_client=c.id_client
+    JOIN localitate l ON o.id_localitate=l.id_localitate
+    WHERE id_cerere=pid_cerere;
+    
+    --afiseaza cererea
+    DBMS_OUTPUT.PUT_LINE ('Pentru cererea ' || pid_cerere || ' ' || cer.nume|| ' ' || cer.prenume || ' ' || cer.id_operatie || ' ' || cer.id_proprietate || ' ' || cer.loc || ' ' || cer.suprafata || ' ' || cer.an_constructie || ' ' || cer.pret);
+    
+    --creaza tabelul cu oferte potrivite
+    SELECT id_oferta, c.nume, c.prenume, id_operatie, o.id_proprietate,o.id_localitate, l.denumire as loc, suprafata, an_constructie, pret, descriere, strada, numar
+    BULK COLLECT INTO T
+    FROM oferta o
+    JOIN client c ON o.id_client=c.id_client
+    JOIN localitate l ON o.id_localitate=l.id_localitate
+    WHERE o.id_proprietate=cer.id_proprietate AND o.id_localitate=cer.id_localitate AND o.suprafata>=cer.suprafata AND ABS(an_constructie - cer.an_constructie)<=10 AND o.pret<=cer.pret
+          AND are_contract_of(id_oferta)>0 AND disponibilitate_of(o.id_oferta)>0 AND ((cer.id_operatie='C' AND o.id_operatie='V') OR (cer.id_operatie='I' AND o.id_operatie='I'));
+    
+    --afisare oferte potrivite 
+    IF t.COUNT = 0 THEN 
+          DBMS_OUTPUT.PUT_LINE ('Nu exista oferte pentru cererea ' || pid_cerere);
+          RETURN;
+    END IF;
+    FOR i IN t.FIRST..t.LAST LOOP 
+     DBMS_OUTPUT.PUT(t(i).id_oferta || ' ' || t(i).nume || ' ' || t(i).prenume || ' ' || t(i).id_operatie || ' ' || t(i).id_proprietate || ' ' || t(i).loc || ' ' || t(i).suprafata || ' ' || t(i).an_constructie || ' ' || t(i).pret || ' ' || t(i).descriere || ' ' || t(i).strada || ' ' || t(i).numar); 
+     DBMS_OUTPUT.NEW_LINE;
+    END LOOP; 
+  END;
+
+PROCEDURE afis_cer_potriv(pid_oferta oferta.id_oferta%TYPE) IS
+  t tablou_indexat_cer; --tablou de record-uri cu detalii cereri
+  ofr t_detalii_of;
+  i NUMBER(3);
+  BEGIN
+    IF disponibilitate_of(pid_oferta)=0 THEN
+        DBMS_OUTPUT.PUT_LINE ('Oferta ' || pid_oferta || ' nu este disponibila!');
+        RETURN;
+    END IF;
+    --preia detalii oferta din tabela in variabila ofr
+    SELECT id_oferta, c.nume, c.prenume, id_operatie, id_proprietate,o.id_localitate, l.denumire as loc, suprafata as suprafata, an_constructie,pret,descriere,strada, numar 
+    INTO ofr
+    FROM oferta o
+    JOIN client c ON o.id_client=c.id_client
+    JOIN localitate l ON o.id_localitate=l.id_localitate
+    WHERE id_oferta=pid_oferta;
+    --afiseaza oferta
+    DBMS_OUTPUT.PUT_LINE ('Pentru oferta ' || pid_oferta || ' ' || ofr.nume|| ' ' || ofr.prenume || ' ' || ofr.id_operatie || ' ' || ofr.id_proprietate || ' ' || ofr.loc || ' ' || ofr.suprafata || ' ' || ofr.an_constructie || ' ' || ofr.pret || ' ' || ofr.descriere || ' ' || ofr.strada || ' ' || ofr.numar);
+    --creaza tabelul cu cereri potrivite
+    SELECT id_cerere, c.nume, c.prenume, id_operatie, o.id_proprietate,o.id_localitate, l.denumire as loc, suprafata_minima as suprafata, an_constructie, buget as pret
+    BULK COLLECT INTO T
+    FROM cerere o
+    JOIN client c ON o.id_client=c.id_client
+    JOIN localitate l ON o.id_localitate=l.id_localitate
+    WHERE o.id_proprietate=ofr.id_proprietate AND o.id_localitate=ofr.id_localitate AND o.suprafata_minima<=ofr.suprafata AND ABS(an_constructie - ofr.an_constructie)<=10 AND o.buget>=ofr.pret
+          AND are_contract_cer(o.id_cerere)>0 AND disponibilitate_cer(o.id_cerere)>0 AND ((ofr.id_operatie='V' AND o.id_operatie='C') OR (ofr.id_operatie='I' AND o.id_operatie='I'));
+    
+    --afisare cereri potrivite 
+    IF t.COUNT = 0 THEN 
+          DBMS_OUTPUT.PUT_LINE ('Nu exista cereri pentru oferta ' || pid_oferta);
+          RETURN;
+    END IF;
+    FOR i IN t.FIRST..t.LAST LOOP 
+     DBMS_OUTPUT.PUT(t(i).id_cerere || ' ' || t(i).nume || ' ' || t(i).prenume || ' ' || t(i).id_operatie || ' ' || t(i).id_proprietate || ' ' || t(i).loc || ' ' || t(i).suprafata || ' ' || t(i).an_constructie || ' ' || t(i).pret); 
+     DBMS_OUTPUT.NEW_LINE;
+    END LOOP; 
+    
+   END;
+
+END cerinta14;
+
+EXECUTE cerinta14.afis_of_potriv(9); 
+EXECUTE cerinta14.afis_of_potriv(10);
+
+EXECUTE cerinta14.afis_cer_potriv(18); 
+EXECUTE cerinta14.afis_cer_potriv(22); 
+
+
+
+
+
+
+
+
+
